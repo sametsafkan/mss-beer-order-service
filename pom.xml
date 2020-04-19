@@ -5,14 +5,14 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.5.RELEASE</version>
+        <version>2.2.6.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>guru.springframework</groupId>
-    <artifactId>mssc-beer-order-service</artifactId>
+    <groupId>com.sametsafkan</groupId>
+    <artifactId>mss-beer-order-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>mssc-beer-order-service</name>
-    <description>MSSC Beer Order Service</description>
+    <name>mss-beer-order-service</name>
+    <description>MSS Beer Order Service</description>
 
     <licenses>
         <license>
@@ -22,18 +22,18 @@
     </licenses>
 
     <organization>
-        <name>Spring Framework Guru</name>
+        <name>Mss Brewery</name>
     </organization>
 
     <developers>
         <developer>
-            <name>John Thompson</name>
-            <organization>Spring Framework Guru</organization>
+            <name>M. Samet Safkan</name>
+            <organization></organization>
         </developer>
     </developers>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>14</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <org.mapstruct.version>1.3.0.Final</org.mapstruct.version>
