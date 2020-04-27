@@ -3,7 +3,7 @@ package com.sametsafkan.beer.order.service.web.mappers;
 import com.sametsafkan.beer.order.service.domain.BeerOrderLine;
 import com.sametsafkan.beer.order.service.services.beer.BeerService;
 import com.sametsafkan.beer.order.service.services.beer.model.BeerDto;
-import com.sametsafkan.beer.order.service.web.model.BeerOrderLineDto;
+import com.sametsafkan.brewery.model.BeerOrderLineDto;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;

@@ -15,16 +15,19 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.sametsafkan.beer.order.service.web.mappers;
+package com.sametsafkan.brewery.model;
 
-import com.sametsafkan.beer.order.service.domain.BeerOrder;
-import com.sametsafkan.brewery.model.BeerOrderDto;
-import org.mapstruct.Mapper;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
-@Mapper(uses = {DateMapper.class, BeerOrderLineMapper.class})
-public interface BeerOrderMapper {
+import java.util.List;
 
-    BeerOrderDto beerOrderToDto(BeerOrder beerOrder);
+public class BeerOrderPagedList extends PageImpl<BeerOrderDto> {
+    public BeerOrderPagedList(List<BeerOrderDto> content, Pageable pageable, long total) {
+        super(content, pageable, total);
+    }
 
-    BeerOrder dtoToBeerOrder(BeerOrderDto dto);
+    public BeerOrderPagedList(List<BeerOrderDto> content) {
+        super(content);
+    }
 }

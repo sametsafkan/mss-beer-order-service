@@ -15,7 +15,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.sametsafkan.beer.order.service.web.model;
+package com.sametsafkan.brewery.model;
 
 import lombok.Builder;
 import lombok.Data;

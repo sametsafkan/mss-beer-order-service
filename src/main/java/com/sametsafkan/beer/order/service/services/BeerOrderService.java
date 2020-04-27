@@ -18,8 +18,8 @@
 package com.sametsafkan.beer.order.service.services;
 
 
-import com.sametsafkan.beer.order.service.web.model.BeerOrderDto;
-import com.sametsafkan.beer.order.service.web.model.BeerOrderPagedList;
+import com.sametsafkan.brewery.model.BeerOrderDto;
+import com.sametsafkan.brewery.model.BeerOrderPagedList;
 import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
