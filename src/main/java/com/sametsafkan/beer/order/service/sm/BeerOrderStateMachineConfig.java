@@ -2,6 +2,8 @@ package com.sametsafkan.beer.order.service.sm;
 
 import com.sametsafkan.beer.order.service.domain.BeerOrderEventEnum;
 import com.sametsafkan.beer.order.service.domain.BeerOrderStatusEnum;
+import com.sametsafkan.beer.order.service.sm.action.ValidateOrderRequestAction;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.statemachine.config.EnableStateMachineFactory;
@@ -16,9 +18,13 @@ import static com.sametsafkan.beer.order.service.domain.BeerOrderStatusEnum.*;
 
 @Slf4j
 @Configuration
+@RequiredArgsConstructor
 @EnableStateMachineFactory
 public class BeerOrderStateMachineConfig extends
         StateMachineConfigurerAdapter<BeerOrderStatusEnum, BeerOrderEventEnum> {
+
+    private final ValidateOrderRequestAction validateOrderRequestAction;
+
     @Override
     public void configure(StateMachineStateConfigurer<BeerOrderStatusEnum, BeerOrderEventEnum> states) throws Exception {
         states.withStates()
@@ -34,7 +40,7 @@ public class BeerOrderStateMachineConfig extends
     @Override
     public void configure(StateMachineTransitionConfigurer<BeerOrderStatusEnum, BeerOrderEventEnum> transitions) throws Exception {
         transitions.withExternal()
-                .source(NEW).target(VALIDATION_PENDING).event(VALIDATE_ORDER)
+                .source(NEW).target(VALIDATION_PENDING).event(VALIDATE_ORDER).action(validateOrderRequestAction)
                 .and()
                 .withExternal()
                 .source(NEW).target(VALIDATED).event(VALIDATION_PASSED)

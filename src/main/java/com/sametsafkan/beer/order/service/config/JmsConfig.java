@@ -12,6 +12,7 @@ public class JmsConfig {
 
     public static final String MY_QUEUE = "my-hello-world";
     public static final String SEND_AND_RECEIVE_QUEUE = "send-and-receive-queue";
+    public static final String VALIDATE_ORDER_QUEUE = "validate-order";
 
     @Bean
     public MessageConverter converter(){
