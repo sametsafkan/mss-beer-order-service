@@ -4,6 +4,7 @@ import com.sametsafkan.beer.order.service.domain.BeerOrder;
 import com.sametsafkan.beer.order.service.domain.BeerOrderEventEnum;
 import com.sametsafkan.beer.order.service.domain.BeerOrderStatusEnum;
 import com.sametsafkan.beer.order.service.repositories.BeerOrderRepository;
+import com.sametsafkan.beer.order.service.sm.BeerOrderInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
@@ -18,8 +19,11 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class BeerOrderManagerImpl implements BeerOrderManager {
 
+    public static final String BEER_ORDER_SM_HEADER = "beer-order-id";
+
     private final BeerOrderRepository repository;
     private final StateMachineFactory<BeerOrderStatusEnum, BeerOrderEventEnum> factory;
+    private final BeerOrderInterceptor interceptor;
 
     @Transactional
     @Override
@@ -34,6 +38,7 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
     public void sendEvent(BeerOrder beerOrder, BeerOrderEventEnum event){
         StateMachine<BeerOrderStatusEnum, BeerOrderEventEnum> sm = build(beerOrder);
         Message msg = MessageBuilder.withPayload(event)
+                .setHeader(BEER_ORDER_SM_HEADER, beerOrder.getId().toString())
                 .build();
         sm.sendEvent(msg);
     }
@@ -42,7 +47,10 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
         StateMachine<BeerOrderStatusEnum, BeerOrderEventEnum> sm = factory.getStateMachine(order.getId());
         sm.stop();
         sm.getStateMachineAccessor()
-            .doWithRegion(sma -> sma.resetStateMachine(new DefaultStateMachineContext<>(order.getOrderStatus(), null, null, null)));
+            .doWithRegion(sma -> {
+                sma.resetStateMachine(new DefaultStateMachineContext<>(order.getOrderStatus(), null, null, null));
+                sma.addStateMachineInterceptor(interceptor);
+            });
         sm.start();
         return sm;
     }
