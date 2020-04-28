@@ -5,6 +5,7 @@ import com.sametsafkan.beer.order.service.domain.BeerOrderEventEnum;
 import com.sametsafkan.beer.order.service.domain.BeerOrderStatusEnum;
 import com.sametsafkan.beer.order.service.repositories.BeerOrderRepository;
 import com.sametsafkan.beer.order.service.sm.BeerOrderInterceptor;
+import com.sametsafkan.brewery.model.BeerOrderDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
@@ -14,6 +15,7 @@ import org.springframework.statemachine.support.DefaultStateMachineContext;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +35,12 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
         BeerOrder savedBeerOrder = repository.save(beerOrder);
         sendEvent(beerOrder ,BeerOrderEventEnum.VALIDATE_ORDER);
         return savedBeerOrder;
+    }
+
+    @Override
+    public void processValidationResult(UUID beerOrderId, boolean isValid) {
+        BeerOrder beerOrder = repository.findOneById(beerOrderId);
+        sendEvent(beerOrder, isValid ? BeerOrderEventEnum.VALIDATION_PASSED : BeerOrderEventEnum.VALIDATION_FAILED);
     }
 
     public void sendEvent(BeerOrder beerOrder, BeerOrderEventEnum event){
