@@ -10,10 +10,9 @@ import static org.springframework.jms.support.converter.MessageType.TEXT;
 @Configuration
 public class JmsConfig {
 
-    public static final String MY_QUEUE = "my-hello-world";
-    public static final String SEND_AND_RECEIVE_QUEUE = "send-and-receive-queue";
     public static final String VALIDATE_ORDER_QUEUE = "validate-order";
     public static final String VALIDATE_ORDER_RESULT_QUEUE = "validate-order-result";
+    public static final String ALLOCATE_ORDER_QUEUE = "allocate-order";
 
     @Bean
     public MessageConverter converter(){

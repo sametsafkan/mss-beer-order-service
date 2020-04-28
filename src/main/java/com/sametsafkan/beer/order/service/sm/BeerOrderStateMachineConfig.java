@@ -2,6 +2,7 @@ package com.sametsafkan.beer.order.service.sm;
 
 import com.sametsafkan.beer.order.service.domain.BeerOrderEventEnum;
 import com.sametsafkan.beer.order.service.domain.BeerOrderStatusEnum;
+import com.sametsafkan.beer.order.service.sm.action.AllocateOrderAction;
 import com.sametsafkan.beer.order.service.sm.action.ValidateOrderRequestAction;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ public class BeerOrderStateMachineConfig extends
         StateMachineConfigurerAdapter<BeerOrderStatusEnum, BeerOrderEventEnum> {
 
     private final ValidateOrderRequestAction validateOrderRequestAction;
+    private final AllocateOrderAction allocateOrderAction;
 
     @Override
     public void configure(StateMachineStateConfigurer<BeerOrderStatusEnum, BeerOrderEventEnum> states) throws Exception {
@@ -40,12 +42,15 @@ public class BeerOrderStateMachineConfig extends
     @Override
     public void configure(StateMachineTransitionConfigurer<BeerOrderStatusEnum, BeerOrderEventEnum> transitions) throws Exception {
         transitions.withExternal()
-                .source(NEW).target(VALIDATION_PENDING).event(VALIDATE_ORDER).action(validateOrderRequestAction)
+                    .source(NEW).target(VALIDATION_PENDING).event(VALIDATE_ORDER).action(validateOrderRequestAction)
                 .and()
                 .withExternal()
-                .source(NEW).target(VALIDATED).event(VALIDATION_PASSED)
+                    .source(NEW).target(VALIDATED).event(VALIDATION_PASSED)
                 .and()
                 .withExternal()
-                .source(NEW).target(VALIDATION_EXCEPTION).event(VALIDATION_FAILED);
+                    .source(NEW).target(VALIDATION_EXCEPTION).event(VALIDATION_FAILED)
+                .and()
+                .withExternal()
+                    .source(VALIDATED).target(ALLOCATION_PENDING).event(VALIDATE_ORDER).action(allocateOrderAction);
     }
 }
