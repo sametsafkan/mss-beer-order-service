@@ -51,6 +51,24 @@ public class BeerOrderStateMachineConfig extends
                     .source(NEW).target(VALIDATION_EXCEPTION).event(VALIDATION_FAILED)
                 .and()
                 .withExternal()
-                    .source(VALIDATED).target(ALLOCATION_PENDING).event(VALIDATE_ORDER).action(allocateOrderAction);
+                    .source(VALIDATED).target(ALLOCATION_PENDING).event(VALIDATE_ORDER).action(allocateOrderAction)
+                .and()
+                .withExternal()
+                    .source(ALLOCATION_PENDING).target(ALLOCATED).event(ALLOCATION_SUCCESS)
+                .and()
+                .withExternal()
+                    .source(ALLOCATION_PENDING).target(ALLOCATION_EXCEPTION).event(ALLOCATION_FAILED)
+                .and()
+                .withExternal()
+                    .source(ALLOCATION_PENDING).target(CANCELLED).event(CANCEL_ORDER)
+                .and()
+                .withExternal()
+                    .source(ALLOCATION_PENDING).target(PENDING_INVENTORY).event(ALLOCATION_NO_INVENTORY)
+                .and()
+                .withExternal()
+                    .source(ALLOCATED).target(PICKED_UP).event(BEER_ORDER_PICKED_UP)
+                .and()
+                .withExternal()
+                    .source(ALLOCATED).target(CANCELLED).event(CANCEL_ORDER);
     }
 }

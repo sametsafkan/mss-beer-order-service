@@ -51,6 +51,18 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
 
     }
 
+    @Override
+    public void processAllocationResult(UUID beerOrderId, boolean isAllocationError, boolean isPendingInventory){
+        BeerOrder beerOrder = repository.findOneById(beerOrderId);
+        if(isAllocationError){
+            sendEvent(beerOrder, BeerOrderEventEnum.ALLOCATION_FAILED);
+        }else if (isPendingInventory){
+            sendEvent(beerOrder, BeerOrderEventEnum.ALLOCATION_NO_INVENTORY);
+        }else{
+            sendEvent(beerOrder, BeerOrderEventEnum.ALLOCATION_SUCCESS);
+        }
+    }
+
     public void sendEvent(BeerOrder beerOrder, BeerOrderEventEnum event){
         StateMachine<BeerOrderStatusEnum, BeerOrderEventEnum> sm = build(beerOrder);
         Message msg = MessageBuilder.withPayload(event)
