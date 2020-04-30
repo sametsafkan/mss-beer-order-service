@@ -17,7 +17,7 @@ public class AllocationOrderListener {
 
     @JmsListener(destination = JmsConfig.ALLOCATE_ORDER_RESULT_QUEUE)
     public void listen(AllocateOrderResult result){
-        beerOrderManager.processAllocationResult(result.getBeerOrderDto().getId(),
+        beerOrderManager.processAllocationResult(result.getBeerOrderDto(),
                 result.getAllocationError(), result.getPendingInventory());
     }
 }

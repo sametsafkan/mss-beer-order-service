@@ -5,7 +5,9 @@ import com.sametsafkan.beer.order.service.domain.BeerOrderEventEnum;
 import com.sametsafkan.beer.order.service.domain.BeerOrderStatusEnum;
 import com.sametsafkan.beer.order.service.repositories.BeerOrderRepository;
 import com.sametsafkan.beer.order.service.sm.BeerOrderInterceptor;
+import com.sametsafkan.brewery.model.BeerOrderDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.statemachine.StateMachine;
@@ -14,8 +16,10 @@ import org.springframework.statemachine.support.DefaultStateMachineContext;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BeerOrderManagerImpl implements BeerOrderManager {
@@ -52,8 +56,8 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
 
     @Transactional
     @Override
-    public void processAllocationResult(UUID beerOrderId, boolean isAllocationError, boolean isPendingInventory){
-        BeerOrder beerOrder = repository.findOneById(beerOrderId);
+    public void processAllocationResult(BeerOrderDto beerOrderDto, boolean isAllocationError, boolean isPendingInventory){
+        BeerOrder beerOrder = repository.findOneById(beerOrderDto.getId());
         if(isAllocationError){
             sendEvent(beerOrder, BeerOrderEventEnum.ALLOCATION_FAILED);
         }else if (isPendingInventory){
@@ -61,6 +65,33 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
         }else{
             sendEvent(beerOrder, BeerOrderEventEnum.ALLOCATION_SUCCESS);
         }
+        updateAllocatedQty(beerOrderDto);
+    }
+
+    @Override
+    @Transactional
+    public void beerOrderPickedUp(UUID id) {
+        Optional<BeerOrder> beerOrderOptional = repository.findById(id);
+        beerOrderOptional.ifPresentOrElse(beerOrder -> {
+            sendEvent(beerOrder, BeerOrderEventEnum.BEER_ORDER_PICKED_UP);
+        }, () -> log.error("Beer Order Not Found for given id : " + id));
+
+    }
+
+    private void updateAllocatedQty(BeerOrderDto beerOrderDto) {
+        Optional<BeerOrder> allocatedOrderOptional = repository.findById(beerOrderDto.getId());
+
+        allocatedOrderOptional.ifPresentOrElse(allocatedOrder -> {
+            allocatedOrder.getBeerOrderLines().forEach(beerOrderLine -> {
+                beerOrderDto.getBeerOrderLines().forEach(beerOrderLineDto -> {
+                    if(beerOrderLine.getId() .equals(beerOrderLineDto.getId())){
+                        beerOrderLine.setQuantityAllocated(beerOrderLineDto.getQuantityAllocated());
+                    }
+                });
+            });
+
+            repository.saveAndFlush(allocatedOrder);
+        }, () -> log.error("Order Not Found. Id: " + beerOrderDto.getId()));
     }
 
     public void sendEvent(BeerOrder beerOrder, BeerOrderEventEnum event){
