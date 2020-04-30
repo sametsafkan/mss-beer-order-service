@@ -4,6 +4,7 @@ import com.sametsafkan.beer.order.service.config.JmsConfig;
 import com.sametsafkan.beer.order.service.domain.BeerOrder;
 import com.sametsafkan.beer.order.service.domain.BeerOrderEventEnum;
 import com.sametsafkan.beer.order.service.domain.BeerOrderStatusEnum;
+import com.sametsafkan.beer.order.service.event.BeerOrderValidationRequest;
 import com.sametsafkan.beer.order.service.repositories.BeerOrderRepository;
 import com.sametsafkan.beer.order.service.services.BeerOrderManagerImpl;
 import com.sametsafkan.beer.order.service.web.mappers.BeerOrderMapper;
@@ -29,7 +30,7 @@ public class ValidateOrderRequestAction implements Action<BeerOrderStatusEnum, B
     public void execute(StateContext<BeerOrderStatusEnum, BeerOrderEventEnum> stateContext) {
         String id = stateContext.getMessageHeader(BeerOrderManagerImpl.BEER_ORDER_SM_HEADER).toString();
         BeerOrder beerOrder = beerOrderRepository.getOne(UUID.fromString(id));
-        jmsTemplate.convertAndSend(JmsConfig.VALIDATE_ORDER_QUEUE, beerOrderMapper.beerOrderToDto(beerOrder));
+        jmsTemplate.convertAndSend(JmsConfig.VALIDATE_ORDER_QUEUE, BeerOrderValidationRequest.builder().id(beerOrder.getId().toString()).build());
         log.debug("Sent validation request to queue for order id : " + id);
     }
 }

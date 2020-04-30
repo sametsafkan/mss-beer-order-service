@@ -5,7 +5,6 @@ import com.sametsafkan.beer.order.service.domain.BeerOrderEventEnum;
 import com.sametsafkan.beer.order.service.domain.BeerOrderStatusEnum;
 import com.sametsafkan.beer.order.service.repositories.BeerOrderRepository;
 import com.sametsafkan.beer.order.service.sm.BeerOrderInterceptor;
-import com.sametsafkan.brewery.model.BeerOrderDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
@@ -51,6 +50,7 @@ public class BeerOrderManagerImpl implements BeerOrderManager {
 
     }
 
+    @Transactional
     @Override
     public void processAllocationResult(UUID beerOrderId, boolean isAllocationError, boolean isPendingInventory){
         BeerOrder beerOrder = repository.findOneById(beerOrderId);

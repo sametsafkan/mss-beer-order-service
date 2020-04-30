@@ -1,5 +1,6 @@
 package com.sametsafkan.beer.order.service.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
@@ -16,10 +17,11 @@ public class JmsConfig {
     public static final String ALLOCATE_ORDER_RESULT_QUEUE = "allocate-order-result";
 
     @Bean
-    public MessageConverter converter(){
+    public MessageConverter converter(ObjectMapper objectMapper){
         MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
         converter.setTargetType(TEXT);
         converter.setTypeIdPropertyName("_type");
+        converter.setObjectMapper(objectMapper);
         return converter;
     }
 }
