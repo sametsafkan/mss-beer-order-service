@@ -9,7 +9,7 @@ import com.sametsafkan.beer.order.service.domain.BeerOrder;
 import com.sametsafkan.beer.order.service.domain.BeerOrderLine;
 import com.sametsafkan.beer.order.service.domain.BeerOrderStatusEnum;
 import com.sametsafkan.beer.order.service.domain.Customer;
-import com.sametsafkan.beer.order.service.event.AllocationFailureEvent;
+import com.sametsafkan.brewery.event.AllocationFailureEvent;
 import com.sametsafkan.beer.order.service.repositories.BeerOrderRepository;
 import com.sametsafkan.beer.order.service.repositories.CustomerRepository;
 import com.sametsafkan.beer.order.service.services.beer.model.BeerDto;

@@ -1,4 +1,4 @@
-package com.sametsafkan.beer.order.service.event;
+package com.sametsafkan.brewery.event;
 
 import lombok.Builder;
 import lombok.Data;

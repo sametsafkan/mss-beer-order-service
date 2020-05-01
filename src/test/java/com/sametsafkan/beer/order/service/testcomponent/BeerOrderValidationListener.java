@@ -2,8 +2,8 @@ package com.sametsafkan.beer.order.service.testcomponent;
 
 import com.sametsafkan.beer.order.service.config.JmsConfig;
 import com.sametsafkan.beer.order.service.domain.BeerOrder;
-import com.sametsafkan.beer.order.service.event.BeerOrderValidationRequest;
-import com.sametsafkan.beer.order.service.event.BeerOrderValidationResponse;
+import com.sametsafkan.brewery.event.BeerOrderValidationRequest;
+import com.sametsafkan.brewery.event.BeerOrderValidationResponse;
 import com.sametsafkan.beer.order.service.repositories.BeerOrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

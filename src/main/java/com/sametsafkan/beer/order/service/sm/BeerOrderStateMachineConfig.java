@@ -2,10 +2,7 @@ package com.sametsafkan.beer.order.service.sm;
 
 import com.sametsafkan.beer.order.service.domain.BeerOrderEventEnum;
 import com.sametsafkan.beer.order.service.domain.BeerOrderStatusEnum;
-import com.sametsafkan.beer.order.service.sm.action.AllocateOrderAction;
-import com.sametsafkan.beer.order.service.sm.action.AllocationFailureAction;
-import com.sametsafkan.beer.order.service.sm.action.ValidateOrderRequestAction;
-import com.sametsafkan.beer.order.service.sm.action.ValidationFailureAction;
+import com.sametsafkan.beer.order.service.sm.action.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +27,7 @@ public class BeerOrderStateMachineConfig extends
     private final AllocateOrderAction allocateOrderAction;
     private final ValidationFailureAction validationFailureAction;
     private final AllocationFailureAction allocationFailureAction;
+    private final DeallocateOrderAction deallocateOrderAction;
 
     @Override
     public void configure(StateMachineStateConfigurer<BeerOrderStatusEnum, BeerOrderEventEnum> states) throws Exception {
@@ -38,6 +36,7 @@ public class BeerOrderStateMachineConfig extends
                 .states(EnumSet.allOf(BeerOrderStatusEnum.class))
                 .end(PICKED_UP)
                 .end(DELIVERED)
+                .end(CANCELLED)
                 .end(DELIVERY_EXCEPTION)
                 .end(VALIDATION_EXCEPTION)
                 .end(ALLOCATION_EXCEPTION);
@@ -55,7 +54,13 @@ public class BeerOrderStateMachineConfig extends
                     .source(VALIDATION_PENDING).target(VALIDATION_EXCEPTION).event(VALIDATION_FAILED).action(validationFailureAction)
                 .and()
                 .withExternal()
+                .source(VALIDATION_PENDING).target(CANCELLED).event(CANCEL_ORDER)
+                .and()
+                .withExternal()
                     .source(VALIDATED).target(ALLOCATION_PENDING).event(ALLOCATE_ORDER).action(allocateOrderAction)
+                .and()
+                .withExternal()
+                .source(VALIDATED).target(CANCELLED).event(CANCEL_ORDER)
                 .and()
                 .withExternal()
                     .source(ALLOCATION_PENDING).target(ALLOCATED).event(ALLOCATION_SUCCESS)
@@ -73,6 +78,6 @@ public class BeerOrderStateMachineConfig extends
                     .source(ALLOCATED).target(PICKED_UP).event(BEER_ORDER_PICKED_UP)
                 .and()
                 .withExternal()
-                    .source(ALLOCATED).target(CANCELLED).event(CANCEL_ORDER);
+                    .source(ALLOCATED).target(CANCELLED).event(CANCEL_ORDER).action(deallocateOrderAction);
     }
 }

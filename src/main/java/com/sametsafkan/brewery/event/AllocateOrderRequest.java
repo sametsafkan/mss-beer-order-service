@@ -1,4 +1,4 @@
-package com.sametsafkan.brewery.model;
+package com.sametsafkan.brewery.event;
 
 import com.sametsafkan.brewery.model.BeerOrderDto;
 import lombok.AllArgsConstructor;

@@ -4,10 +4,11 @@ import com.sametsafkan.beer.order.service.config.JmsConfig;
 import com.sametsafkan.beer.order.service.domain.BeerOrder;
 import com.sametsafkan.beer.order.service.domain.BeerOrderEventEnum;
 import com.sametsafkan.beer.order.service.domain.BeerOrderStatusEnum;
-import com.sametsafkan.brewery.event.BeerOrderValidationRequest;
+import com.sametsafkan.brewery.event.DeallocateOrderRequest;
 import com.sametsafkan.beer.order.service.repositories.BeerOrderRepository;
 import com.sametsafkan.beer.order.service.services.BeerOrderManagerImpl;
 import com.sametsafkan.beer.order.service.web.mappers.BeerOrderMapper;
+import com.sametsafkan.brewery.model.BeerOrderDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jms.core.JmsTemplate;
@@ -20,7 +21,7 @@ import java.util.UUID;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class ValidateOrderRequestAction implements Action<BeerOrderStatusEnum, BeerOrderEventEnum> {
+public class DeallocateOrderAction implements Action<BeerOrderStatusEnum, BeerOrderEventEnum> {
 
     private final JmsTemplate jmsTemplate;
     private final BeerOrderRepository beerOrderRepository;
@@ -28,9 +29,10 @@ public class ValidateOrderRequestAction implements Action<BeerOrderStatusEnum, B
 
     @Override
     public void execute(StateContext<BeerOrderStatusEnum, BeerOrderEventEnum> stateContext) {
-        String id = stateContext.getMessageHeader(BeerOrderManagerImpl.BEER_ORDER_SM_HEADER).toString();
-        BeerOrder beerOrder = beerOrderRepository.getOne(UUID.fromString(id));
-        jmsTemplate.convertAndSend(JmsConfig.VALIDATE_ORDER_QUEUE, BeerOrderValidationRequest.builder().id(beerOrder.getId().toString()).build());
-        log.debug("Sent validation request to queue for order id : " + id);
+        String beerOrderId = (String)stateContext.getMessage().getHeaders().get(BeerOrderManagerImpl.BEER_ORDER_SM_HEADER);
+        BeerOrder beerOrder = beerOrderRepository.findOneById(UUID.fromString(beerOrderId));
+        BeerOrderDto beerOrderDto = beerOrderMapper.beerOrderToDto(beerOrder);
+        jmsTemplate.convertAndSend(JmsConfig.DEALLOCATE_ORDER_QUEUE, DeallocateOrderRequest.builder().beerOrderDto(beerOrderDto).build());
+        log.debug("Sent Allocation Request for order id : " + beerOrderId);
     }
 }

@@ -7,7 +7,7 @@ import com.sametsafkan.beer.order.service.domain.BeerOrderStatusEnum;
 import com.sametsafkan.beer.order.service.repositories.BeerOrderRepository;
 import com.sametsafkan.beer.order.service.services.BeerOrderManagerImpl;
 import com.sametsafkan.beer.order.service.web.mappers.BeerOrderMapper;
-import com.sametsafkan.brewery.model.AllocateOrderRequest;
+import com.sametsafkan.brewery.event.AllocateOrderRequest;
 import com.sametsafkan.brewery.model.BeerOrderDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

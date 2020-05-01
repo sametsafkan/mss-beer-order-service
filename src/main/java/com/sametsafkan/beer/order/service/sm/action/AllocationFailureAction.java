@@ -3,7 +3,7 @@ package com.sametsafkan.beer.order.service.sm.action;
 import com.sametsafkan.beer.order.service.config.JmsConfig;
 import com.sametsafkan.beer.order.service.domain.BeerOrderEventEnum;
 import com.sametsafkan.beer.order.service.domain.BeerOrderStatusEnum;
-import com.sametsafkan.beer.order.service.event.AllocationFailureEvent;
+import com.sametsafkan.brewery.event.AllocationFailureEvent;
 import com.sametsafkan.beer.order.service.services.BeerOrderManagerImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
