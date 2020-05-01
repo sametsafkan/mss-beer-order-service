@@ -17,17 +17,22 @@
 
 package com.sametsafkan.beer.order.service.web.controllers;
 
+import com.sametsafkan.beer.order.service.CustomerService;
 import com.sametsafkan.beer.order.service.services.BeerOrderService;
 import com.sametsafkan.brewery.model.BeerOrderDto;
 import com.sametsafkan.brewery.model.BeerOrderPagedList;
+import com.sametsafkan.brewery.model.CustomerDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RequestMapping("/api/v1/customers/{customerId}/")
 @RestController
+@RequiredArgsConstructor
 public class BeerOrderController {
 
     private static final Integer DEFAULT_PAGE_NUMBER = 0;
@@ -35,9 +40,7 @@ public class BeerOrderController {
 
     private final BeerOrderService beerOrderService;
 
-    public BeerOrderController(BeerOrderService beerOrderService) {
-        this.beerOrderService = beerOrderService;
-    }
+    private final CustomerService customerService;
 
     @GetMapping("orders")
     public BeerOrderPagedList listOrders(@PathVariable("customerId") UUID customerId,
@@ -66,9 +69,14 @@ public class BeerOrderController {
         return beerOrderService.getOrderById(customerId, orderId);
     }
 
-    @PutMapping("/orders/{orderId}/pickup")
+    @PutMapping("orders/{orderId}/pickup")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void pickupOrder(@PathVariable("customerId") UUID customerId, @PathVariable("orderId") UUID orderId){
         beerOrderService.pickupOrder(customerId, orderId);
+    }
+
+    @GetMapping("customers")
+    public List<CustomerDto> listCustomers(){
+        return customerService.listCustomers();
     }
 }
