@@ -3,6 +3,7 @@ package com.sametsafkan.beer.order.service.sm;
 import com.sametsafkan.beer.order.service.domain.BeerOrderEventEnum;
 import com.sametsafkan.beer.order.service.domain.BeerOrderStatusEnum;
 import com.sametsafkan.beer.order.service.sm.action.AllocateOrderAction;
+import com.sametsafkan.beer.order.service.sm.action.AllocationFailureAction;
 import com.sametsafkan.beer.order.service.sm.action.ValidateOrderRequestAction;
 import com.sametsafkan.beer.order.service.sm.action.ValidationFailureAction;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class BeerOrderStateMachineConfig extends
     private final ValidateOrderRequestAction validateOrderRequestAction;
     private final AllocateOrderAction allocateOrderAction;
     private final ValidationFailureAction validationFailureAction;
+    private final AllocationFailureAction allocationFailureAction;
 
     @Override
     public void configure(StateMachineStateConfigurer<BeerOrderStatusEnum, BeerOrderEventEnum> states) throws Exception {
@@ -59,7 +61,7 @@ public class BeerOrderStateMachineConfig extends
                     .source(ALLOCATION_PENDING).target(ALLOCATED).event(ALLOCATION_SUCCESS)
                 .and()
                 .withExternal()
-                    .source(ALLOCATION_PENDING).target(ALLOCATION_EXCEPTION).event(ALLOCATION_FAILED)
+                    .source(ALLOCATION_PENDING).target(ALLOCATION_EXCEPTION).event(ALLOCATION_FAILED).action(allocationFailureAction)
                 .and()
                 .withExternal()
                     .source(ALLOCATION_PENDING).target(CANCELLED).event(CANCEL_ORDER)
