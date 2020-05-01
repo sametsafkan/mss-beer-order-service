@@ -19,7 +19,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
-import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -68,6 +67,7 @@ class BeerOrderManagerImplIT {
     @Test
     void testNewToAllocated() throws JsonProcessingException, InterruptedException {
         BeerOrder beerOrder = createBeerOrder();
+        beerOrder.setCustomerRef("new-to-allocated");
         BeerDto beer = BeerDto.builder().id(beerId).upc("12345").build();
         wireMockServer.stubFor(get(beerServicePath + "12345")
                                 .willReturn(okJson(objectMapper.writeValueAsString(beer))));
@@ -94,6 +94,7 @@ class BeerOrderManagerImplIT {
                 .willReturn(okJson(objectMapper.writeValueAsString(beerDto))));
 
         BeerOrder beerOrder = createBeerOrder();
+        beerOrder.setCustomerRef("picked-up");
         BeerOrder savedBeerOrder = beerOrderManager.newBeerOrder(beerOrder);
 
         await().untilAsserted(() -> {
