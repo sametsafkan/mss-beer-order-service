@@ -25,7 +25,7 @@ public class BeerOrderValidationListener {
     public void listen(BeerOrderValidationRequest request){
         boolean isValid = true;
         boolean sendResponse = true;
-        BeerOrder beerOrder = repository.findById(UUID.fromString(request.getId())).get();
+        BeerOrder beerOrder = repository.findById(request.getBeerOrderDto().getId()).get();
         if(beerOrder.getCustomerRef().equals("fail-validation")){
             isValid = false;
         }else if (beerOrder.getCustomerRef().equals("dont-validate")){
@@ -33,7 +33,7 @@ public class BeerOrderValidationListener {
         }
         if (sendResponse) {
             jmsTemplate.convertAndSend(JmsConfig.VALIDATE_ORDER_RESULT_QUEUE,
-                    BeerOrderValidationResponse.builder().beerOrderId(UUID.fromString(request.getId())).isValid(isValid).build());
+                    BeerOrderValidationResponse.builder().beerOrderId(request.getBeerOrderDto().getId()).isValid(isValid).build());
         }
     }
 }
